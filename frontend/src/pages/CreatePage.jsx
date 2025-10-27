@@ -3,45 +3,59 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router";
 import api from "../lib/axios";
+import RateLimitedUI from "../components/RateLimitedUI";
 
 const CreatePage = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+  const [rateLimited, setRateLimited] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (loading) return;
     if (!title.trim() || !content.trim()) {
       toast.error("All fields are required");
       return;
     }
 
     setLoading(true);
+
     try {
-      await api.post("/notes", {
-        title,
-        content,
-      });
+      const response = await api.post("/notes", { title, content });
+
+      // ✅ Handle rate limit from backend (429)
+      if (response.status === 429) {
+        setRateLimited(true);
+        toast.error("⚡ You're creating notes too quickly. Please wait a few seconds.", {
+          duration: 4000,
+        });
+        return;
+      }
 
       toast.success("Note created successfully!");
       navigate("/");
+
     } catch (error) {
-      console.log("Error creating note", error);
-      if (error.response.status === 429) {
-        toast.error("Slow down! You're creating notes too fast", {
+      if (error.response && error.response.status === 429) {
+        // ✅ Instant frontend reaction to rate limit
+        setRateLimited(true);
+        toast.error("⚡ Too many requests! Please slow down.", {
           duration: 4000,
-          icon: "💀",
         });
       } else {
-        toast.error("Failed to create note");
+        console.log("Error creating note:", error);
+        toast.error("Failed to create note. Please try again.");
       }
     } finally {
-      setLoading(false);
+      setTimeout(() => setLoading(false), 1200);
     }
   };
+
+  if (rateLimited) return <RateLimitedUI />;
 
   return (
     <div className="min-h-screen bg-base-200">
@@ -82,7 +96,11 @@ const CreatePage = () => {
                 </div>
 
                 <div className="card-actions justify-end">
-                  <button type="submit" className="btn btn-primary" disabled={loading}>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={loading}
+                  >
                     {loading ? "Creating..." : "Create Note"}
                   </button>
                 </div>
@@ -94,4 +112,5 @@ const CreatePage = () => {
     </div>
   );
 };
+
 export default CreatePage;
