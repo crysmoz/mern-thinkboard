@@ -5,30 +5,35 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { connectDB } from "./config/db.js";
-import { rateLimiter } from "./middleware/rateLimiter.js"; // make sure this import is here
+import { rateLimiter } from "./middleware/rateLimiter.js";
 import notesRoutes from "./routes/notesRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
-// ✅ Middleware (order matters!)
-if (process.env.NODE_ENV !== "production") {
-  app.use(
-    cors({
-      origin: "http://localhost:5173",
-    })
-  );
-}
-app.use(express.json());
+// ✅ CORS Configuration (for both local + production)
+const allowedOrigins = [
+  "http://localhost:5173",                      // local dev
+  "https://mern-thinkboard-opal.vercel.app",    // your deployed frontend
+];
 
-// ✅ Add the rate limiter **before** your routes
+app.use(
+  cors({
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
+// ✅ Middleware
+app.use(express.json());
 app.use(rateLimiter);
 
-// ✅ Then your routes
+// ✅ Routes
 app.use("/api/notes", notesRoutes);
 
-// ✅ Static files for production
+// ✅ Serve static frontend (for production)
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
   app.get("*", (req, res) =>
@@ -36,8 +41,9 @@ if (process.env.NODE_ENV === "production") {
   );
 }
 
+// ✅ Connect to MongoDB and start server
 connectDB().then(() => {
   app.listen(PORT, () => {
-    console.log("Server started on PORT:", PORT);
+    console.log("✅ Server started on PORT:", PORT);
   });
 });
