@@ -13,9 +13,21 @@ const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
 // ✅ CORS Configuration (for both local + production)
+// const allowedOrigins = [
+//   "http://localhost:5173",                      // local dev
+//   "https://mern-thinkboard-opal.vercel.app",    // your deployed frontend
+// ];
+
+// app.use(
+//   cors({
+//     origin: allowedOrigins,
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   })
+// );
 const allowedOrigins = [
-  "http://localhost:5173",                      // local dev
-  "https://mern-thinkboard-opal.vercel.app",    // your deployed frontend
+  "http://localhost:5173",
+  "https://mern-thinkboard-opal.vercel.app"
 ];
 
 app.use(
@@ -26,9 +38,10 @@ app.use(
   })
 );
 
+
 // ✅ Middleware
 app.use(express.json());
-app.use(rateLimiter);
+// app.use(rateLimiter);
 
 // ✅ Routes
 app.use("/api/notes", notesRoutes);
