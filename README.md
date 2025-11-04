@@ -1,4 +1,4 @@
-<h1 align="center">📝 MERN Stack Note Taking App 📝 </h1>
+<h1 align="center">MERN Stack Note Taking App 📝 </h1>
 
 ThinkBoard is a full-stack note-taking web app built using the MERN stack. 
 It allows users to create, update, and delete personal notes efficiently with instant sync. 
