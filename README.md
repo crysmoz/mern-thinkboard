@@ -53,3 +53,7 @@ npm run dev
 ```
 The frontend runs on http://localhost:5173
  (Vite)
+
+ ### 🎥 Project Demo
+[▶️ Watch ThinkBoard Demo on Google Drive](https://drive.google.com/file/d/1kV8h6xjc6K-ZTb0JxomwV0bwnrtQtu0x/view?usp=sharing)
+
