@@ -32,6 +32,7 @@ UPSTASH_REDIS_REST_TOKEN=<your_redis_rest_token>
 
 NODE_ENV=development
 ```
+Create a .env file inside /backend directory and paste the above values
 
 ## 🔧 Run the Backend
 
