@@ -40,6 +40,8 @@ cd backend
 npm install
 npm run dev
 ```
+The backend will start on http://localhost:5001
+ by default
 
 ## 💻 Run the Frontend
 
@@ -48,3 +50,5 @@ cd frontend
 npm install
 npm run dev
 ```
+The frontend runs on http://localhost:5173
+ (Vite)
